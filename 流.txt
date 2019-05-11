@@ -1,0 +1,159 @@
+
+package com.huibo.zhanghao;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * 读写文件的类
+ * @author Administrator
+ *
+ */
+public class Test02 {
+
+	public static void main(String[] args) throws IOException {
+
+		//获取文件
+		/**
+		 *	@SuppressWarnings("resource")
+		 *	BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("e:/a.txt"))));
+		 */
+		FileInputStream fis = null;
+		try {
+			//创建文件字节输入流
+			fis = new FileInputStream("e:/a.txt");
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		//创建InputStreamReader类是从字节流到字符流的桥接器
+		InputStreamReader isr =new InputStreamReader(fis);
+		//字符缓冲输入流
+		BufferedReader bufferedReader= new BufferedReader(isr);
+		//用一个字符串来保存读取的数据
+		String str = "" ;
+		//创建一个集合来保存所有学生数据
+		List<Student> list = new ArrayList<>();
+		//创建一个集合来保存性别为男的所有学生数据
+		List<Student> list1 = new ArrayList<>();
+		//获取第一行的表头
+		String head = bufferedReader.readLine() ;
+		//循环遍历文件的每一行
+		while((str = bufferedReader.readLine())!= null) {
+			//创建一个Student对象
+			Student stu = new Student();
+			//设置对象的学生编号
+			stu.setNum(Integer.valueOf(str.split(",")[0]));
+			//设置对象的学生姓名
+			stu.setName(str.split(",")[1]);
+			//设置对象的学生性别
+			stu.setSex(str.split(",")[2]);
+			//设置对象的学生年龄
+			stu.setAge(Integer.valueOf(str.split(",")[3]));
+			//将对象添加到集合中
+			list.add(stu);
+		}
+		//循环遍历list集合
+		for (Student student : list) {
+			//将性别为男的学生添加到list1集合中
+			if(student.getSex().equals("男")) {
+				list1.add(student);
+			}
+		}
+		//给list1集合排序
+		Collections.sort(list1);
+		//循环遍历打印list1
+		list1.stream().forEach((x)->{
+			System.out.println(x.getNum()+","+x.getName()+","+x.getSex()+","+x.getAge());
+		});
+		
+		//创建文件写入流的对象，并写到一个文件中
+		BufferedWriter w = new BufferedWriter(new FileWriter("E:\\c.txt"));
+		//先写入表头
+		w.write(head+"\r\n");
+		//循环将写入list1写入文件
+		list1.stream().forEach((x)->{
+			try {
+				w.write(x.getNum()+","+x.getName()+","+x.getSex()+","+x.getAge()+"\r\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+		//刷新文件写入流
+		w.flush();
+		//关闭文件写入流
+		w.close();
+	}
+}
+
+
+########################################################################################
+package com.huibo.zhanghao;
+
+public class Student implements Comparable<Student>{
+
+	private Integer num ;
+	
+	private String name ;
+	
+	private String sex ;
+	
+	private Integer age ;
+
+	public Integer getNum() {
+		return num;
+	}
+
+	public void setNum(Integer num) {
+		this.num = num;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
+	@Override
+	public String toString() {
+		return "num=" + num + ", name=" + name + ", sex=" + sex + ", age=" + age ;
+	}
+
+	@Override
+	public int compareTo(Student o) {
+		int i=0;
+		if(this.age>o.age) i=1;
+		if(this.age<o.age) i=-1;
+		
+		return i;
+	}
+	
+}
+
+
+
